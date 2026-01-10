@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="origin">
     <title>WatchPal</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -24,60 +25,348 @@
             --prime-blue: #00A8E1;
             --disney-blue: #113CCF;
             --max-purple: #4717F6;
-            --peacock-yellow: #000000; /* Peacock uses black/multi usually, using dark bg */
+            --peacock-yellow: #000000;
             --apple-grey: #333333;
             --paramount-blue: #0064FF;
         }
 
+        /* ========== INTRO SPLASH SCREEN ========== */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0b0f 0%, #1a1c24 50%, #0a0b0f 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            overflow: hidden;
+        }
+
+        .splash-screen.fade-out {
+            animation: splashFadeOut 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes splashFadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; pointer-events: none; }
+        }
+
+        .splash-content {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .splash-logo {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, var(--accent) 50%, #fff 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: logoReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards, 
+                        gradientShift 3s ease infinite;
+            opacity: 0;
+            transform: scale(0.8) translateY(20px);
+            letter-spacing: -2px;
+        }
+
+        @keyframes logoReveal {
+            0% { opacity: 0; transform: scale(0.8) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .splash-tagline {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            opacity: 0;
+            animation: fadeSlideUp 0.8s ease forwards;
+            animation-delay: 0.5s;
+            margin-top: 0.5rem;
+        }
+
+        .splash-loader {
+            width: 120px;
+            height: 3px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            margin: 2rem auto 0;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+            animation-delay: 0.7s;
+        }
+
+        .splash-loader-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #ff4d5a, var(--accent));
+            background-size: 200% 100%;
+            border-radius: 4px;
+            animation: loadProgress 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+                        loaderGlow 1s ease infinite;
+            animation-delay: 0.8s;
+        }
+
+        @keyframes loadProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes loaderGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Floating cinema particles in splash */
+        .splash-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0;
+            animation: particleFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes particleFloat {
+            0%, 100% { 
+                opacity: 0; 
+                transform: translateY(100vh) rotate(0deg); 
+            }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { 
+                opacity: 0; 
+                transform: translateY(-100px) rotate(360deg); 
+            }
+        }
+
+        /* ========== ANIMATED BACKGROUND ========== */
         body {
             background-color: var(--bg-main);
-            background-image: radial-gradient(circle at 50% 0%, #1f2330 0%, var(--bg-main) 70%);
+            background-image: 
+                radial-gradient(ellipse at 20% 0%, rgba(229, 9, 20, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(71, 23, 246, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 50% 0%, #1f2330 0%, var(--bg-main) 70%);
             color: var(--text-primary);
             font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 20px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
             box-sizing: border-box;
+            overflow-x: hidden;
         }
 
+        /* Ambient floating orbs */
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: orbFloat 15s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent);
+            top: -100px;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 250px;
+            height: 250px;
+            background: var(--max-purple);
+            bottom: -100px;
+            right: 10%;
+            animation-delay: -5s;
+        }
+
+        .orb-3 {
+            width: 200px;
+            height: 200px;
+            background: var(--disney-blue);
+            top: 50%;
+            left: -50px;
+            animation-delay: -10s;
+        }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.1); }
+            50% { transform: translate(-20px, 20px) scale(0.9); }
+            75% { transform: translate(20px, 10px) scale(1.05); }
+        }
+
+        /* ========== STAGGERED REVEAL ANIMATIONS ========== */
         .container {
             width: 100%;
             max-width: 800px;
+            position: relative;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: contentReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 2.3s;
+        }
+
+        @keyframes contentReveal {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeSlideUp {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
         }
 
         header {
             text-align: center;
             margin-bottom: 2.5rem;
+            opacity: 0;
+            animation: fadeSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 2.4s;
         }
 
         h1 {
             font-weight: 800;
             font-size: 3rem;
             margin: 0;
-            background: linear-gradient(45deg, #fff, var(--text-secondary));
+            background: linear-gradient(135deg, #fff 0%, var(--text-secondary) 50%, #fff 100%);
+            background-size: 200% 200%;
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: -1px;
+            animation: gradientShift 4s ease infinite;
+            transition: transform 0.3s ease;
+        }
+
+        h1:hover {
+            transform: scale(1.02);
         }
 
         .subtitle {
             color: var(--text-secondary);
             font-size: 1rem;
             margin-top: 0.5rem;
+            opacity: 0;
+            animation: fadeSlideUp 0.8s ease forwards;
+            animation-delay: 2.6s;
+        }
+
+        /* --- Tab Switcher --- */
+        .tab-switcher {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-btn {
+            background: var(--bg-input);
+            border: 2px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab-btn:hover {
+            background: #2a2e38;
+            transform: translateY(-2px);
+            color: var(--text-primary);
+        }
+
+        .tab-btn.active {
+            background: rgba(229, 9, 20, 0.15);
+            border-color: var(--accent);
+            color: var(--text-primary);
+            box-shadow: 0 0 20px rgba(229, 9, 20, 0.2);
         }
 
         /* --- Controls Card --- */
         .controls-card {
-            background: var(--bg-card);
+            background: rgba(22, 24, 31, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             padding: 2rem;
             border-radius: 24px;
-            box-shadow: var(--shadow-soft);
-            border: 1px solid var(--border-color);
+            box-shadow: 
+                var(--shadow-soft),
+                0 0 0 1px rgba(255,255,255,0.05) inset,
+                0 0 60px rgba(229, 9, 20, 0.05);
+            border: 1px solid rgba(255,255,255,0.08);
             position: relative;
             z-index: 2;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: cardReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 2.5s;
+            transition: box-shadow 0.4s ease, transform 0.3s ease;
+            will-change: transform, opacity;
+        }
+
+        .controls-card:hover {
+            box-shadow: 
+                0 12px 40px rgba(0,0,0,0.6),
+                0 0 0 1px rgba(255,255,255,0.08) inset,
+                0 0 80px rgba(229, 9, 20, 0.08);
+        }
+
+        @keyframes cardReveal {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Tab Switch Animation Class --- */
+        @keyframes switchPop {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.98); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .animating-switch {
+            animation: switchPop 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .input-grid {
@@ -134,12 +423,19 @@
             font-weight: 500;
             outline: none;
             appearance: none; 
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
         }
 
-        select:hover { background: #2a2e38; }
-        select:focus { border-color: var(--accent); }
+        select:hover { 
+            background: #2a2e38; 
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        select:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.15);
+        }
 
         /* --- Service Toggles --- */
         .services-container {
@@ -173,8 +469,20 @@
             font-weight: 600;
             font-size: 0.9rem;
             border: 2px solid transparent;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             color: var(--text-secondary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-label:hover {
+            transform: translateY(-3px) scale(1.02);
+            background: #2a2e38;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .service-label:active {
+            transform: translateY(-1px) scale(0.98);
         }
 
         .service-toggle input:checked + .service-label {
@@ -194,61 +502,162 @@
             width: 100%;
             margin-top: 1rem;
             padding: 18px;
-            background: linear-gradient(45deg, var(--accent), var(--accent-hover));
+            background: linear-gradient(135deg, var(--accent) 0%, #ff2d3a 50%, var(--accent-hover) 100%);
+            background-size: 200% 200%;
             color: white;
             border: none;
             border-radius: 12px;
             font-size: 1.1rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 20px rgba(229, 9, 20, 0.4);
             text-transform: uppercase;
             letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            animation: buttonPulse 3s ease-in-out infinite;
         }
 
-        button.btn-main:hover { transform: translateY(-2px); }
-        button.btn-main:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        @keyframes buttonPulse {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Shimmer effect */
+        button.btn-main::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255,255,255,0.2),
+                transparent
+            );
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            50%, 100% { left: 100%; }
+        }
+
+        button.btn-main:hover { 
+            transform: translateY(-3px) scale(1.02); 
+            box-shadow: 0 8px 30px rgba(229, 9, 20, 0.5);
+        }
+        
+        button.btn-main:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+        
+        button.btn-main:disabled { 
+            opacity: 0.5; 
+            cursor: not-allowed; 
+            transform: none; 
+            animation: none;
+        }
+        
+        button.btn-main:disabled::before {
+            animation: none;
+        }
 
         /* --- Result Card --- */
         #result-area {
             margin-top: 2rem;
             display: none; 
             perspective: 1000px;
+            animation: resultReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out, max-height 0.4s ease-out, margin-top 0.4s ease-out;
+            opacity: 1;
+            will-change: transform, opacity, max-height;
+            max-height: 2000px; /* Ensure enough height for content */
+            overflow: hidden;
+        }
+
+        /* FIXED FADE OUT TO PREVENT JUMP */
+        #result-area.fade-out {
+            opacity: 0 !important;
+            transform: translateY(20px) scale(0.98) !important;
+            max-height: 0 !important;
+            margin-top: 0 !important;
+            padding: 0 !important; 
+            pointer-events: none;
+        }
+        
+        /* Ensure inner grid borders/shadows don't cause jump */
+        #result-area.fade-out .result-grid {
+            box-shadow: none !important;
+            border: none !important;
+        }
+
+        @keyframes resultReveal {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
         .result-grid {
             display: grid;
             grid-template-columns: 1fr;
-            background: var(--bg-card);
-            border-radius: 24px;
+            background: rgba(22, 24, 31, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 28px;
             overflow: hidden;
-            box-shadow: var(--shadow-soft);
-            border: 1px solid var(--border-color);
+            box-shadow: 
+                0 20px 60px rgba(0,0,0,0.5),
+                0 0 0 1px rgba(255,255,255,0.05) inset;
+            border: 1px solid rgba(255,255,255,0.08);
             transform-style: preserve-3d;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+            will-change: transform, opacity;
+        }
+        
+        .result-grid:hover {
+            transform: translateY(-4px);
+            box-shadow: 
+                0 30px 80px rgba(0,0,0,0.6),
+                0 0 0 1px rgba(255,255,255,0.08) inset,
+                0 0 100px rgba(70, 211, 105, 0.08);
         }
         
         .winner-glow {
-            animation: pulseSuccess 0.8s ease-out forwards;
+            animation: pulseSuccess 1s ease-out forwards;
             border-color: var(--success) !important;
         }
         
         @keyframes pulseSuccess {
-            0% { transform: scale(1); box-shadow: 0 0 0 rgba(70, 211, 105, 0); }
-            50% { transform: scale(1.02); box-shadow: 0 0 30px rgba(70, 211, 105, 0.5); }
-            100% { transform: scale(1); box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+            0% { transform: scale(0.98); box-shadow: 0 0 0 rgba(70, 211, 105, 0); }
+            50% { transform: scale(1.01); box-shadow: 0 0 50px rgba(70, 211, 105, 0.4); }
+            100% { transform: scale(1); box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 30px rgba(70, 211, 105, 0.15); }
         }
 
         @media (min-width: 650px) {
-            .result-grid { grid-template-columns: 280px 1fr; }
+            .result-grid { grid-template-columns: 300px 1fr; }
         }
 
         .poster-wrapper {
-            background: #000;
+            background: linear-gradient(135deg, #1a1c24 0%, #0a0b0f 100%);
             position: relative;
             overflow: hidden;
-            min-height: 400px;
+            min-height: 420px;
+        }
+
+        /* Poster gradient overlay for depth */
+        .poster-wrapper::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(to top, rgba(10, 11, 15, 0.9), transparent);
+            pointer-events: none;
+            z-index: 1;
         }
 
         .movie-img {
@@ -256,113 +665,166 @@
             height: 100%;
             object-fit: cover;
             display: block;
-            transition: filter 0.2s;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .rolling .movie-img {
-            filter: blur(8px) grayscale(0.8);
-            transform: scale(1.1);
+            filter: blur(12px) grayscale(0.9) brightness(0.6);
+            transform: scale(1.15);
         }
 
         .movie-content {
-            padding: 2.5rem;
+            padding: 1.75rem 2rem 2rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
             position: relative;
+            gap: 0.25rem;
+        }
+        
+        /* Subtle gradient accent on content side */
+        .movie-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--accent) 0%, var(--success) 50%, var(--max-purple) 100%);
+            opacity: 0.6;
         }
 
         /* --- Provider Badges --- */
         #provider-list {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
-            margin-bottom: 1.5rem;
-            min-height: 30px; 
+            margin-bottom: 1.25rem;
+            min-height: 34px;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
 
         .provider-badge {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 700;
-            padding: 6px 12px;
+            padding: 8px 14px;
             border-radius: 50px;
             background: #333;
             color: #fff;
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation: badgeSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
             opacity: 0;
-            transform: scale(0.8);
-            border: 1px solid rgba(255,255,255,0.1);
+            transform: translateY(10px) scale(0.9);
+            border: 1px solid rgba(255,255,255,0.15);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .provider-badge:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
         }
 
-        @keyframes popIn { to { opacity: 1; transform: scale(1); } }
+        @keyframes badgeSlideIn { 
+            to { opacity: 1; transform: translateY(0) scale(1); } 
+        }
 
-        .provider-netflix { background: var(--netflix-red); }
-        .provider-hulu { background: var(--hulu-green); color: #000; }
-        .provider-disney { background: var(--disney-blue); }
-        .provider-prime { background: var(--prime-blue); }
-        .provider-max { background: var(--max-purple); }
-        .provider-generic { background: #333; }
+        .provider-netflix { background: linear-gradient(135deg, var(--netflix-red), #b2070f); box-shadow: 0 4px 15px rgba(229, 9, 20, 0.3); }
+        .provider-hulu { background: linear-gradient(135deg, var(--hulu-green), #15b366); color: #000; box-shadow: 0 4px 15px rgba(28, 231, 131, 0.3); }
+        .provider-disney { background: linear-gradient(135deg, var(--disney-blue), #0a2a8f); box-shadow: 0 4px 15px rgba(17, 60, 207, 0.3); }
+        .provider-prime { background: linear-gradient(135deg, var(--prime-blue), #0085b3); box-shadow: 0 4px 15px rgba(0, 168, 225, 0.3); }
+        .provider-max { background: linear-gradient(135deg, var(--max-purple), #3310c9); box-shadow: 0 4px 15px rgba(71, 23, 246, 0.3); }
+        .provider-generic { background: linear-gradient(135deg, #444, #333); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
 
         /* --- Title & Meta --- */
         .header-row {
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            gap: 10px;
+            gap: 16px;
             flex-wrap: wrap;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
         }
 
         .movie-title {
-            font-size: 2.2rem;
+            font-size: 2.4rem;
             font-weight: 800;
             margin: 0;
             line-height: 1.1;
+            background: linear-gradient(135deg, #fff 0%, #e0e0e0 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: titleReveal 0.6s ease forwards;
+        }
+        
+        @keyframes titleReveal {
+            0% { opacity: 0; transform: translateX(-10px); }
+            100% { opacity: 1; transform: translateX(0); }
         }
 
         /* TRAILER BUTTON */
         .btn-trailer {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
             color: white;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 8px 16px;
+            padding: 10px 18px;
             border-radius: 50px;
             font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
+            gap: 8px;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             display: none; /* Hidden until we find a trailer */
             white-space: nowrap;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .btn-trailer span {
+            transition: transform 0.3s ease;
         }
 
         .btn-trailer:hover {
             background: white;
             color: black;
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(255,255,255,0.2);
+        }
+        
+        .btn-trailer:hover span {
+            transform: scale(1.2);
         }
 
         .meta-row {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 1.5rem;
+            gap: 14px;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
             font-weight: 600;
             color: var(--text-secondary);
-            margin-top: 10px;
+            margin-top: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
 
         .rating-badge {
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            padding: 4px 8px;
-            border-radius: 6px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 180, 0, 0.1));
+            color: #ffd700;
+            padding: 6px 12px;
+            border-radius: 8px;
             font-weight: 700;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .age-badge {
@@ -380,15 +842,57 @@
         .age-green { border-color: #46d369; color: #46d369; }
 
         .movie-desc {
-            font-size: 1rem;
-            line-height: 1.6;
-            color: #c4c4c4;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: rgba(200, 200, 210, 0.9);
+            margin: 0;
+            letter-spacing: 0.01em;
         }
 
         .scramble-text {
             color: var(--accent);
             opacity: 0.7;
             font-family: monospace;
+        }
+
+        /* --- FOOTER --- */
+        .site-footer {
+            width: 100%;
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-top: auto;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .site-footer a {
+            position: relative;
+            text-decoration: none;
+            font-weight: 600;
+            background: linear-gradient(90deg, var(--accent), var(--max-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: text-shadow 0.5s ease-in-out;
+        }
+
+        .site-footer a::before {
+            content: 'Ryan Kiapour';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: var(--accent);
+            transition: opacity 0.5s ease-in-out;
+            opacity: 1;
+        }
+
+        .site-footer a:hover::before {
+            opacity: 0;
+        }
+
+        .site-footer a:hover {
+            text-shadow: 0 0 20px rgba(229, 9, 20, 0.5);
         }
 
         /* --- TRAILER MODAL --- */
@@ -431,14 +935,31 @@
             border: none;
         }
 
-    </style>
+</style>
 </head>
 <body>
+
+<div class="splash-screen" id="splash">
+    <div class="splash-particles" id="particles"></div>
+    <div class="splash-content">
+        <div class="splash-logo">WatchPal</div>
+        <p class="splash-tagline">Your movie night, decided.</p>
+        <div class="splash-loader">
+            <div class="splash-loader-bar"></div>
+        </div>
+    </div>
+</div>
+
+<div class="ambient-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+</div>
 
 <div id="trailer-modal">
     <div class="modal-content">
         <button class="close-modal" onclick="closeTrailer()">×</button>
-        <iframe id="trailer-frame" width="100%" height="100%" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <iframe id="trailer-frame" width="100%" height="100%" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
     </div>
 </div>
 
@@ -449,6 +970,10 @@
     </header>
 
     <div class="controls-card">
+        <div class="tab-switcher">
+            <button class="tab-btn active" data-mode="movie" onclick="switchMode('movie')">🎬 Movies</button>
+            <button class="tab-btn" data-mode="tv" onclick="switchMode('tv')">📺 TV Shows</button>
+        </div>
         <div class="input-grid">
             <div class="input-group">
                 <label>Vibe</label>
@@ -546,7 +1071,39 @@
     </div>
 </div>
 
+<footer class="site-footer">
+    <p>Developed by <a href="https://ryancodes.xyz" target="_blank" rel="noopener">Ryan Kiapour</a></p>
+</footer>
+
 <script>
+    // ========== SPLASH SCREEN LOGIC ==========
+    (function initSplash() {
+        const particles = ['🍿', '🎬', '🎥', '🎞️', '⭐', '🌟', '🎭', '🎦', '📽️', '🎪', '🏆', '🎤', '💫', '✨', '🔥', '🎯', '🎁', '💎', '🌙', '🎧'];
+        const particlesContainer = document.getElementById('particles');
+        
+        // Create floating particles - more particles for a livelier splash
+        for (let i = 0; i < 24; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.innerText = particles[Math.floor(Math.random() * particles.length)];
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 4 + 's';
+            particle.style.animationDuration = (3 + Math.random() * 2) + 's';
+            particlesContainer.appendChild(particle);
+        }
+        
+        // Fade out splash after loading completes
+        setTimeout(() => {
+            const splash = document.getElementById('splash');
+            splash.classList.add('fade-out');
+            
+            // Remove from DOM after animation
+            setTimeout(() => {
+                splash.style.display = 'none';
+            }, 800);
+        }, 2300); // Match the CSS animation timing
+    })();
+
     // !!! API KEY HERE !!!
     const API_KEY = '74ec98ddb3bea32d4984617cdd384585'; 
     const BASE_URL = 'https://api.themoviedb.org/3';
@@ -554,6 +1111,7 @@
     let candidateMovies = [];
     let animationInterval = null;
     let currentTrailerKey = null;
+    let currentMode = 'movie'; // 'movie' or 'tv'
 
     // Expanded Map for better coverage
     const PROVIDER_MAP = {
@@ -568,6 +1126,61 @@
         2: { name: 'Apple TV (Rent)', class: 'provider-generic' },
         3: { name: 'Google Play', class: 'provider-generic' }
     };
+
+    // Map movie genres to TV genres (some are different)
+    const TV_GENRE_MAP = {
+        '28': '10759',   // Action -> Action & Adventure
+        '35': '35',      // Comedy -> Comedy
+        '18': '18',      // Drama -> Drama
+        '878': '10765',  // Sci-Fi -> Sci-Fi & Fantasy
+        '27': '9648',    // Horror -> Mystery (closest TV equivalent)
+        '9648': '80',    // Mystery -> Crime
+        '10749': '10749' // Romance -> Romance
+    };
+
+    function switchMode(mode) {
+        currentMode = mode;
+        const tabs = document.querySelectorAll('.tab-btn');
+        tabs.forEach(tab => {
+            if (tab.dataset.mode === mode) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        });
+
+        // Trigger Animation on inputs to show context switch
+        const inputs = document.querySelector('.input-grid');
+        inputs.classList.remove('animating-switch');
+        void inputs.offsetWidth; // Trigger reflow
+        inputs.classList.add('animating-switch');
+        
+        // Stop any ongoing roulette
+        if (animationInterval) {
+            clearInterval(animationInterval);
+            animationInterval = null;
+        }
+
+        // Update button text and reset state immediately
+        const btn = document.querySelector('.btn-main');
+        btn.innerText = mode === 'movie' ? 'PICK MY MOVIE' : 'PICK MY SHOW';
+        btn.disabled = false;
+        
+        // Fade out any existing results with animation
+        const resultArea = document.getElementById('result-area');
+        if (resultArea.style.display !== 'none') {
+            resultArea.classList.add('fade-out');
+            
+            // Increased timeout slightly to 500ms to allow CSS transition (0.4s) to fully finish
+            // before removing element, preventing the layout jump.
+            setTimeout(() => {
+                resultArea.style.display = 'none';
+                resultArea.classList.remove('fade-out');
+                // Clean up card state
+                document.getElementById('card-inner').classList.remove('rolling', 'winner-glow');
+            }, 500);
+        }
+    }
 
     async function startDecisionEngine() {
         const btn = document.querySelector('.btn-main');
@@ -607,10 +1220,17 @@
         if (era === '80s')   { dateGTE = '1980-01-01'; dateLTE = '1989-12-31'; }
 
         let sortBy = 'popularity.desc';
-        let minVotes = 300;
-        if (popType === 'gems') { sortBy = 'vote_average.desc'; minVotes = 150; }
+        let minVotes = currentMode === 'movie' ? 300 : 100; // TV shows have fewer votes typically
+        if (popType === 'gems') { sortBy = 'vote_average.desc'; minVotes = currentMode === 'movie' ? 150 : 50; }
 
-        let url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=${genre}&primary_release_date.gte=${dateGTE}&primary_release_date.lte=${dateLTE}&sort_by=${sortBy}&vote_count.gte=${minVotes}&language=en-US&page=1&watch_region=US`;
+        let url;
+        if (currentMode === 'movie') {
+            url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=${genre}&primary_release_date.gte=${dateGTE}&primary_release_date.lte=${dateLTE}&sort_by=${sortBy}&vote_count.gte=${minVotes}&language=en-US&page=1&watch_region=US`;
+        } else {
+            // TV mode - use different endpoint and date fields
+            const tvGenre = TV_GENRE_MAP[genre] || genre;
+            url = `${BASE_URL}/discover/tv?api_key=${API_KEY}&with_genres=${tvGenre}&first_air_date.gte=${dateGTE}&first_air_date.lte=${dateLTE}&sort_by=${sortBy}&vote_count.gte=${minVotes}&language=en-US&page=1&watch_region=US`;
+        }
 
         // If user explicitly asks for specific services, filter by them.
         // If not, we search everything and just display where it is later.
@@ -626,7 +1246,8 @@
             candidateMovies = data.results.filter(m => m.poster_path && m.overview);
 
             if (candidateMovies.length === 0) {
-                alert("No movies found! Try selecting fewer services or different filters.");
+                const typeText = currentMode === 'movie' ? 'movies' : 'TV shows';
+                alert(`No ${typeText} found! Try selecting fewer services or different filters.`);
                 resetUI();
                 return;
             }
@@ -635,7 +1256,7 @@
 
         } catch (error) {
             console.error(error);
-            alert("Error fetching movies. Check API Key.");
+            alert("Error fetching data. Check API Key.");
             resetUI();
         }
     }
@@ -653,7 +1274,7 @@
         animationInterval = setInterval(() => {
             const randomMov = candidateMovies[Math.floor(Math.random() * candidateMovies.length)];
             posterEl.src = `https://image.tmdb.org/t/p/w342${randomMov.poster_path}`;
-            titleEl.innerText = randomMov.title;
+            titleEl.innerText = randomMov.title || randomMov.name;
             titleEl.classList.add('scramble-text');
 
             steps++;
@@ -668,21 +1289,34 @@
         const winner = candidateMovies[Math.floor(Math.random() * candidateMovies.length)];
         const cardInner = document.getElementById('card-inner');
         const titleEl = document.getElementById('title');
+        const resultArea = document.getElementById('result-area');
         
         cardInner.classList.remove('rolling');
         titleEl.classList.remove('scramble-text');
         
-        // Update Content
+        // Update Content - handle both movies (title/release_date) and TV shows (name/first_air_date)
         document.getElementById('poster').src = `https://image.tmdb.org/t/p/original${winner.poster_path}`;
-        titleEl.innerText = winner.title;
-        document.getElementById('year').innerText = winner.release_date.split('-')[0];
+        titleEl.innerText = winner.title || winner.name;
+        const dateField = winner.release_date || winner.first_air_date || '';
+        document.getElementById('year').innerText = dateField ? dateField.split('-')[0] : 'N/A';
         document.getElementById('rating').innerText = winner.vote_average.toFixed(1);
         document.getElementById('overview').innerText = winner.overview;
+        
+        // Smooth auto-scroll to result card
+        setTimeout(() => {
+            resultArea.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center'
+            });
+        }, 100);
 
         // --- PARALLEL FETCHING: Providers, Age, Videos ---
-        const providerUrl = `${BASE_URL}/movie/${winner.id}/watch/providers?api_key=${API_KEY}`;
-        const releaseUrl = `${BASE_URL}/movie/${winner.id}/release_dates?api_key=${API_KEY}`;
-        const videoUrl = `${BASE_URL}/movie/${winner.id}/videos?api_key=${API_KEY}&language=en-US`;
+        const mediaType = currentMode === 'movie' ? 'movie' : 'tv';
+        const providerUrl = `${BASE_URL}/${mediaType}/${winner.id}/watch/providers?api_key=${API_KEY}`;
+        const releaseUrl = currentMode === 'movie' 
+            ? `${BASE_URL}/movie/${winner.id}/release_dates?api_key=${API_KEY}`
+            : `${BASE_URL}/tv/${winner.id}/content_ratings?api_key=${API_KEY}`;
+        const videoUrl = `${BASE_URL}/${mediaType}/${winner.id}/videos?api_key=${API_KEY}&language=en-US`;
 
         try {
             const [pRes, rRes, vRes] = await Promise.all([
@@ -731,17 +1365,28 @@
             // 2. AGE RATING
             const ageBadge = document.getElementById('age-rating');
             let certification = 'NR';
-            const usRelease = rData.results.find(r => r.iso_3166_1 === 'US');
-            if (usRelease) {
-                const certData = usRelease.release_dates.find(d => d.certification !== '');
-                if (certData) certification = certData.certification;
+            
+            if (currentMode === 'movie') {
+                // Movie: use release_dates format
+                const usRelease = rData.results.find(r => r.iso_3166_1 === 'US');
+                if (usRelease && usRelease.release_dates) {
+                    const certData = usRelease.release_dates.find(d => d.certification !== '');
+                    if (certData) certification = certData.certification;
+                }
+            } else {
+                // TV: use content_ratings format
+                const usRating = rData.results.find(r => r.iso_3166_1 === 'US');
+                if (usRating && usRating.rating) {
+                    certification = usRating.rating;
+                }
             }
+            
             ageBadge.innerText = certification;
             ageBadge.style.display = 'inline-block';
             ageBadge.className = 'age-badge'; 
             if (['R', 'NC-17', 'TV-MA'].includes(certification)) ageBadge.classList.add('age-red');
             else if (['PG-13', 'TV-14'].includes(certification)) ageBadge.classList.add('age-yellow');
-            else if (['G', 'PG', 'TV-G', 'TV-PG'].includes(certification)) ageBadge.classList.add('age-green');
+            else if (['G', 'PG', 'TV-G', 'TV-PG', 'TV-Y', 'TV-Y7'].includes(certification)) ageBadge.classList.add('age-green');
 
             // 3. TRAILER
             const trailerBtn = document.getElementById('btn-watch-trailer');
@@ -776,8 +1421,8 @@
         if(!currentTrailerKey) return;
         const modal = document.getElementById('trailer-modal');
         const frame = document.getElementById('trailer-frame');
-        // Autoplay enabled
-        frame.src = `https://www.youtube.com/embed/${currentTrailerKey}?autoplay=1`;
+        // Use youtube-nocookie.com for better embedding compatibility
+        frame.src = `https://www.youtube-nocookie.com/embed/${currentTrailerKey}?autoplay=1&rel=0`;
         modal.classList.add('open');
     }
 
