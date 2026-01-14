@@ -25,9 +25,11 @@
             --prime-blue: #00A8E1;
             --disney-blue: #113CCF;
             --max-purple: #4717F6;
-            --peacock-yellow: #000000;
+            --max-purple: #4717F6;
+            --peacock-gold: #eeb400;
             --apple-grey: #333333;
-            --paramount-blue: #0064FF;
+            --peacock-gold: #eeb400;
+            --apple-grey: #333333;
         }
 
         /* ========== INTRO SPLASH SCREEN ========== */
@@ -517,6 +519,8 @@
         .service-toggle input[value="337"]:checked + .service-label { border-color: var(--disney-blue); box-shadow: 0 0 10px rgba(17, 60, 207, 0.2); }
         .service-toggle input[value="9"]:checked + .service-label { border-color: var(--prime-blue); box-shadow: 0 0 10px rgba(0, 168, 225, 0.2); }
         .service-toggle input[value="1899"]:checked + .service-label { border-color: var(--max-purple); box-shadow: 0 0 10px rgba(71, 23, 246, 0.2); }
+        .service-toggle input[value="3353"]:checked + .service-label { border-color: var(--peacock-gold); box-shadow: 0 0 10px rgba(238, 180, 0, 0.2); color: var(--peacock-gold); }
+        .service-toggle input[value="350"]:checked + .service-label { border-color: #ffffff; box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); }
 
         /* --- Button --- */
         button.btn-main {
@@ -709,9 +713,9 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 3px;
-            height: 100%;
-            background: linear-gradient(180deg, var(--accent) 0%, var(--success) 50%, var(--max-purple) 100%);
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--success) 50%, var(--max-purple) 100%);
             opacity: 0.6;
         }
 
@@ -759,6 +763,8 @@
         .provider-disney { background: linear-gradient(135deg, var(--disney-blue), #0a2a8f); box-shadow: 0 4px 15px rgba(17, 60, 207, 0.3); }
         .provider-prime { background: linear-gradient(135deg, var(--prime-blue), #0085b3); box-shadow: 0 4px 15px rgba(0, 168, 225, 0.3); }
         .provider-max { background: linear-gradient(135deg, var(--max-purple), #3310c9); box-shadow: 0 4px 15px rgba(71, 23, 246, 0.3); }
+        .provider-peacock { background: linear-gradient(135deg, var(--peacock-gold), #b38600); color: #000; box-shadow: 0 4px 15px rgba(238, 180, 0, 0.3); }
+        .provider-apple { background: linear-gradient(135deg, #333333, #111111); box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15); }
         .provider-generic { background: linear-gradient(135deg, #444, #333); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
 
         /* --- Title & Meta --- */
@@ -788,39 +794,95 @@
             100% { opacity: 1; transform: translateX(0); }
         }
 
-        /* TRAILER BUTTON */
-        .btn-trailer {
-            background: rgba(255, 255, 255, 0.08);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 10px 18px;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            display: none; /* Hidden until we find a trailer */
-            white-space: nowrap;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+        .btn-trailer:hover span {
         }
         
-        .btn-trailer span {
-            transition: transform 0.3s ease;
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .btn-watch-now {
+            flex: 1;
+            min-width: 140px;
+            background: linear-gradient(135deg, var(--success) 0%, #1f9d45 100%);
+            color: #052e12;
+            padding: 14px 20px;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 8px 20px rgba(70, 211, 105, 0.25);
+            border: 1px solid rgba(255,255,255,0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-watch-now::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(255,255,255,0.2), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-watch-now:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(70, 211, 105, 0.4);
+            background: linear-gradient(135deg, #5ce67f 0%, var(--success) 100%);
+            color: black;
+        }
+        
+        .btn-watch-now:hover::after { opacity: 1; }
+
+        .btn-trailer {
+            flex: 1;
+            min-width: 140px;
+            background: rgba(255, 255, 255, 0.06);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 14px 20px;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex; /* Hidden by default via inline style if needed, but controlled by JS */
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .btn-trailer:hover {
             background: white;
             color: black;
-            transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(255,255,255,0.2);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(255,255,255,0.15);
+            border-color: white;
         }
         
-        .btn-trailer:hover span {
-            transform: scale(1.2);
+        /* SVG Icon styling */
+        .btn-icon {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2.5px;
         }
 
         .meta-row {
@@ -956,6 +1018,15 @@
             border: none;
         }
 
+
+        @media (min-width: 650px) {
+            .movie-content::before {
+                width: 3px;
+                height: 100%;
+                background: linear-gradient(180deg, var(--accent) 0%, var(--success) 50%, var(--max-purple) 100%);
+            }
+        }
+
 </style>
 </head>
 <body>
@@ -1056,6 +1127,14 @@
                         <input type="checkbox" id="prime" value="9">
                         <label for="prime" class="service-label">Prime</label>
                     </div>
+                    <div class="service-toggle">
+                        <input type="checkbox" id="peacock" value="3353">
+                        <label for="peacock" class="service-label">Peacock</label>
+                    </div>
+                    <div class="service-toggle">
+                        <input type="checkbox" id="apple" value="350">
+                        <label for="apple" class="service-label">Apple TV+</label>
+                    </div>
                 </div>
             </div>
 
@@ -1076,9 +1155,16 @@
 
                 <div class="header-row">
                     <h2 id="title" class="movie-title">Title</h2>
-                    <button id="btn-watch-trailer" class="btn-trailer" onclick="openTrailer()">
-                        <span>▶</span> Watch Trailer
-                    </button>
+                    <div class="action-buttons">
+                        <a id="btn-watch-now" class="btn-watch-now" href="#" target="_blank">
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                            Watch Now
+                        </a>
+                        <button id="btn-watch-trailer" class="btn-trailer" onclick="openTrailer()">
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                            Trailer
+                        </button>
+                    </div>
                 </div>
 
                 <div class="meta-row">
@@ -1144,9 +1230,9 @@
         337: { name: 'Disney+', class: 'provider-disney' },
         9: { name: 'Prime Video', class: 'provider-prime' },
         1899: { name: 'Max', class: 'provider-max' },
-        384: { name: 'Peacock', class: 'provider-generic' },
-        531: { name: 'Paramount+', class: 'provider-generic' },
-        350: { name: 'Apple TV+', class: 'provider-generic' },
+        3353: { name: 'Peacock', class: 'provider-peacock' },
+        384: { name: 'Peacock', class: 'provider-peacock' }, 
+        350: { name: 'Apple TV+', class: 'provider-apple' },
         2: { name: 'Apple TV (Rent)', class: 'provider-generic' },
         3: { name: 'Google Play', class: 'provider-generic' }
     };
@@ -1217,6 +1303,7 @@
         document.getElementById('provider-list').innerHTML = '';
         document.getElementById('age-rating').style.display = 'none';
         document.getElementById('btn-watch-trailer').style.display = 'none';
+        document.getElementById('btn-watch-now').style.display = 'none';
 
         resultArea.style.display = 'block';
         cardInner.classList.add('rolling');
@@ -1235,6 +1322,8 @@
         if(document.getElementById('disney').checked) userServices.push(337);
         if(document.getElementById('prime').checked) userServices.push(9);
         if(document.getElementById('max').checked) userServices.push(1899);
+        if(document.getElementById('peacock').checked) userServices.push(3353);
+        if(document.getElementById('apple').checked) userServices.push(350);
 
         let dateGTE = '2015-01-01';
         let dateLTE = new Date().toISOString().split('T')[0];
@@ -1373,7 +1462,7 @@
                              const badge = document.createElement('div');
                              const pInfo = PROVIDER_MAP[prov.provider_id];
                              badge.className = `provider-badge ${pInfo.class}`;
-                             badge.innerHTML = `<span>▶</span> ${pInfo.name}`;
+                             badge.innerText = pInfo.name;
                              providerListEl.appendChild(badge);
                         }
                     }
@@ -1422,6 +1511,18 @@
                 trailerBtn.style.display = 'flex';
             } else {
                 trailerBtn.style.display = 'none';
+            }
+
+            // 4. WATCH NOW BUTTON
+            const watchBtn = document.getElementById('btn-watch-now');
+            if (pData.results && pData.results.US && pData.results.US.link) {
+                watchBtn.href = pData.results.US.link;
+                watchBtn.style.display = 'flex';
+            } else {
+                // Determine a search link if no direct provider link
+                const query = encodeURIComponent(`${winner.title || winner.name} watch online`);
+                watchBtn.href = `https://www.google.com/search?q=${query}`;
+                watchBtn.style.display = 'flex';
             }
 
         } catch(e) { console.log("Fetch error", e); }
